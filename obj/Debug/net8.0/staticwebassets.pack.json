@@ -13,6 +13,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\User\\source\\repos\\ProjectForUsa\\Stock_Explorer\\Stock_Explorer\\wwwroot\\images\\Untitled-design-88.webp",
+      "PackagePath": "staticwebassets\\images\\Untitled-design-88.webp"
+    },
+    {
       "Id": "C:\\Users\\User\\source\\repos\\ProjectForUsa\\Stock_Explorer\\Stock_Explorer\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

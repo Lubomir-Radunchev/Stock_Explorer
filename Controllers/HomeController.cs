@@ -1,18 +1,26 @@
+using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Stock_Explorer.DTO;
 using Stock_Explorer.Models;
+using System;
 using System.Composition;
 using System.Diagnostics;
+using System.Net;
+using System.Net.Http;
 
 namespace Stock_Explorer.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly HttpClient _client;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IHttpClientFactory httpClientFactory)
         {
-            _logger = logger;
+            _client = httpClientFactory.CreateClient();
+            // Set the base address
+            _client.BaseAddress = new Uri("https://yfapi.net/v6/finance/history");
         }
         [HttpGet]
         public IActionResult Index()
@@ -22,45 +30,77 @@ namespace Stock_Explorer.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(SearchCriteria stock)
+        public async Task<IActionResult> IndexAsync(SearchCriteria stock)
         {
-            List<Stock> stocks = new List<Stock>();
-            using (var client = new HttpClient())
+            //List<Stock> stocks = new List<Stock>();
+            //using (var client = new HttpClient())
+            //{
+            //    client.BaseAddress = new Uri("https://yfapi.net/v6/finance/quote?symbols=AAPL");
+            //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+            //    request.Headers.Add("X-API-KEY", "[My API key]");
+            //    //HTTP GET
+            //    var responseTask = client.GetAsync("");
+            //    responseTask.Wait();
+
+            //    var result = responseTask.Result;
+            //    if (result.IsSuccessStatusCode)
+            //    {
+            //        var readTask = result.Content.ReadFromJsonAsync<List<Stock>>();
+            //        readTask.Wait();
+
+            //        stocks = readTask.Result;
+            //    }
+            //    else //web api sent error response 
+            //    {
+            //        stocks = new List<Stock> { };
+
+            //        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+            //    }
+            //}
+
+            //stocks = stocks.Where(x => x.Name == stock.Name).OrderByDescending(x=> x.Date).ToList();
+
+
+            //// TempData["stocks"] = JsonConvert.SerializeObject(stocks);
+            //TempData["stocks"] = JsonConvert.SerializeObject(stocks);
+
+            //return RedirectToAction("ShowStocks");
+
+            var request = new HttpRequestMessage(HttpMethod.Get, "quote?symbols=AAPL");
+
+            // Add the required header
+            request.Headers.Add("X-API-KEY", "3db8airwaIaFxjOS261v69J7U5civ2D85RW9JrUo");
+
+            // Send the request and get the response
+            var response = await _client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
             {
-                client.BaseAddress = new Uri("https://localhost:7037/api/");
-                //HTTP GET
-                var responseTask = client.GetAsync("stocks");
-                responseTask.Wait();
+                // Deserialize the response content
+                var responseContent = await response.Content.ReadAsStringAsync();
 
-                var result = responseTask.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    var readTask = result.Content.ReadFromJsonAsync<List<Stock>>();
-                    readTask.Wait();
 
-                    stocks = readTask.Result;
-                }
-                else //web api sent error response 
-                {
-                    stocks = new List<Stock> { };
+                var stockInfo = JsonConvert.DeserializeObject<StockInfo>(responseContent);
 
-                    ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
-                }
+                List<StockYahooDTO> stockDetails = stockInfo?.QuoteResponse?.Result;
+
+                // Process 'result' as needed
+
+                return View();
+            }
+            else
+            {
+                // Handle the error, e.g., log or return an error view
+                return View("Error");
             }
 
-            stocks = stocks.Where(x => x.Name == stock.Name).ToList();
 
-
-            TempData["stocks"] = stocks;
-
-
-            return RedirectToAction("ShowStocks");
         }
 
 
         public IActionResult ShowStocks()
         {
-            List<Stock> stocks = (List<Stock>)TempData["stocks"];
+            List<Stock> stocks = JsonConvert.DeserializeObject<List<Stock>>(TempData["stocks"] as string);
 
             return View(stocks);
         }

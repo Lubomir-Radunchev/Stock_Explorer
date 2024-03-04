@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "EAeNiDhJZljqgTTRUZGYqxstgdKW/6LC5+NzNlIRtFE=",
+  "Hash": "3OTey/vRT8EX+VG/kku61FbaLjsXFqRa5SpIhoXDxTg=",
   "Source": "Stock_Explorer",
   "BasePath": "_content/Stock_Explorer",
   "Mode": "Default",
@@ -1231,6 +1231,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "C:\\Users\\User\\source\\repos\\ProjectForUsa\\Stock_Explorer\\Stock_Explorer\\wwwroot\\images\\Untitled-design-88.webp",
+      "SourceId": "Stock_Explorer",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\User\\source\\repos\\ProjectForUsa\\Stock_Explorer\\Stock_Explorer\\wwwroot\\",
+      "BasePath": "_content/Stock_Explorer",
+      "RelativePath": "images/Untitled-design-88.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\Untitled-design-88.webp"
     },
     {
       "Identity": "C:\\Users\\User\\source\\repos\\ProjectForUsa\\Stock_Explorer\\Stock_Explorer\\wwwroot\\js\\site.js",

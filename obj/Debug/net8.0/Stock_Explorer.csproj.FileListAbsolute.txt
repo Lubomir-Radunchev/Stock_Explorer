@@ -144,3 +144,5 @@ C:\Users\User\source\repos\ProjectForUsa\Stock_Explorer\Stock_Explorer\obj\Debug
 C:\Users\User\source\repos\ProjectForUsa\Stock_Explorer\Stock_Explorer\obj\Debug\net8.0\Stock_Explorer.pdb
 C:\Users\User\source\repos\ProjectForUsa\Stock_Explorer\Stock_Explorer\obj\Debug\net8.0\Stock_Explorer.genruntimeconfig.cache
 C:\Users\User\source\repos\ProjectForUsa\Stock_Explorer\Stock_Explorer\obj\Debug\net8.0\ref\Stock_Explorer.dll
+C:\Users\User\source\repos\ProjectForUsa\Stock_Explorer\Stock_Explorer\obj\Debug\net8.0\Stock_Explorer.sourcelink.json
+C:\Users\User\source\repos\ProjectForUsa\Stock_Explorer\Stock_Explorer\bin\Debug\net8.0\Newtonsoft.Json.dll
