@@ -8,6 +8,7 @@ using System.Composition;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography.Xml;
 
 namespace Stock_Explorer.Controllers
 {
@@ -20,7 +21,7 @@ namespace Stock_Explorer.Controllers
         {
             _client = httpClientFactory.CreateClient();
             // Set the base address
-            _client.BaseAddress = new Uri("https://yfapi.net/v6/finance/history");
+            _client.BaseAddress = new Uri("https://alpha.financeapi.net/symbol/get-chart");
         }
         [HttpGet]
         public IActionResult Index()
@@ -66,7 +67,12 @@ namespace Stock_Explorer.Controllers
 
             //return RedirectToAction("ShowStocks");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, "quote?symbols=AAPL");
+
+
+
+
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"get-chart?period=3M&symbol=AAPL");
 
             // Add the required header
             request.Headers.Add("X-API-KEY", "3db8airwaIaFxjOS261v69J7U5civ2D85RW9JrUo");
@@ -77,16 +83,29 @@ namespace Stock_Explorer.Controllers
             if (response.IsSuccessStatusCode)
             {
                 // Deserialize the response content
+
+
+
+
                 var responseContent = await response.Content.ReadAsStringAsync();
 
+                ChartData? stockInfo = JsonConvert.DeserializeObject<ChartData>(responseContent);
 
-                var stockInfo = JsonConvert.DeserializeObject<StockInfo>(responseContent);
+                ;
+                //List<ChartDataPoint> stockDataPoints = stockInfo?.Attributes?.DataPoints?.Values.ToList();
 
-                List<StockYahooDTO> stockDetails = stockInfo?.QuoteResponse?.Result;
+
+                var correct = stockInfo.attributes.OrderByDescending(x => x.Key);
+
+                TempData["stocks"] = JsonConvert.SerializeObject(correct);
+
+                //var stockInfo = JsonConvert.DeserializeObject<StockInfo>(responseContent);
+
+                //List<StockYahooDTO> stockDetails = stockInfo?.QuoteResponse?.Result;
 
                 // Process 'result' as needed
 
-                return View();
+                return RedirectToAction("ShowStocks");
             }
             else
             {
@@ -100,7 +119,7 @@ namespace Stock_Explorer.Controllers
 
         public IActionResult ShowStocks()
         {
-            List<Stock> stocks = JsonConvert.DeserializeObject<List<Stock>>(TempData["stocks"] as string);
+            List<ChartData> stocks = JsonConvert.DeserializeObject<List<ChartData>>(TempData["stocks"] as string);
 
             return View(stocks);
         }

@@ -1,4 +1,4 @@
-﻿@model List<Stock>
+﻿@model List<ChartData>
 
 
 
@@ -9,26 +9,27 @@
             <th scope="col">Open</th>
             <th scope="col">Close</th>
             <th scope="col">High </th>
-            <th scope="col">Low </th>
+      @*       <th scope="col">Low </th>
             <th scope="col">AdjClose</th>
-            <th scope="col">Volume</th>
+            <th scope="col">Volume</th> *@
         </tr>
 
     </thead>
     <tbody>
         @foreach (var stock in Model)
         {
-
-            <tr class ="text-white">
-
-                <td scope="col">@stock.Date</td>
-                <td scope="col">@stock.Open</td>
-                <td scope="col">@stock.Close</td>
-                <td scope="col">@stock.High</td>
-                <td scope="col">@stock.Low</td>
-                <td scope="col">@stock.AdjClose</td>
-                <td scope="col">@stock.Volume</td>
-            </tr>
+            foreach (var item in stock.attributes.Values)
+            {
+                <tr class="text-white">
+                    <td scope="col">@stock.attributes.Keys</td>
+                    <td scope="col">@item.Volume</td>
+                    <td scope="col">@item.Adj</td>
+                    <td scope="col">@item.High</td>
+                   @*  <td scope="col">@stock.Low</td>
+                    <td scope="col">@stock.AdjClose</td>
+                    <td scope="col">@stock.Volume</td> *@
+                </tr>
+            }
         }
     </tbody>
 </table>
