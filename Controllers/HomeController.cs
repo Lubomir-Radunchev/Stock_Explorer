@@ -72,7 +72,7 @@ namespace Stock_Explorer.Controllers
 
 
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"get-chart?period=3M&symbol=AAPL");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"get-chart?period=6M&symbol=AAPL");
 
             // Add the required header
             request.Headers.Add("X-API-KEY", "3db8airwaIaFxjOS261v69J7U5civ2D85RW9JrUo");
@@ -95,7 +95,7 @@ namespace Stock_Explorer.Controllers
                 //List<ChartDataPoint> stockDataPoints = stockInfo?.Attributes?.DataPoints?.Values.ToList();
 
 
-                var correct = stockInfo.attributes.OrderByDescending(x => x.Key);
+                var correct = stockInfo.attributes.OrderByDescending(x => x.Key).LastOrDefault();
 
                 TempData["stocks"] = JsonConvert.SerializeObject(correct);
 
@@ -119,8 +119,16 @@ namespace Stock_Explorer.Controllers
 
         public IActionResult ShowStocks()
         {
-            List<ChartData> stocks = JsonConvert.DeserializeObject<List<ChartData>>(TempData["stocks"] as string);
+            string jsonString = TempData["stocks"] as string;
 
+            // Deserialize into a Dictionary<string, ChartDataPoint>
+            ChartDataTest stocks = JsonConvert.DeserializeObject<ChartDataTest>(jsonString);
+
+            // Convert string keys to DateTimeKey
+            //Dictionary<string, ChartDataPoint> stocksDateTimeKeys = stocksStringKeys.ToDictionary(
+            //    kvp => kvp.Key,  // Convert string key to DateTimeKey
+            //    kvp => kvp.Value
+            //);
             return View(stocks);
         }
         public IActionResult Privacy()

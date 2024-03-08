@@ -20,3 +20,12 @@ public class ChartDataPoint
     public string Volume { get; set; }
     public string Adj { get; set; }
 }
+
+
+
+
+public class ChartDataTest
+{
+    public string Key { get; set; }
+    public ChartDataPoint Value { get; set; }
+}

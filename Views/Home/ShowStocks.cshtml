@@ -1,6 +1,17 @@
-﻿@model List<ChartData>
+﻿@using Newtonsoft.Json
+@model ChartDataTest
+@{
+    // string jsonString = TempData["stocks"] as string;
 
+    // // Deserialize into a Dictionary<string, ChartDataPoint>
+    // Dictionary<string, ChartDataPoint> stocksStringKeys = JsonConvert.DeserializeObject<Dictionary<string, ChartDataPoint>>(jsonString);
 
+    // // Convert string keys to DateTimeKey
+    // Dictionary<string, ChartDataPoint> stocksDateTimeKeys = stocksStringKeys.ToDictionary(
+    //     kvp => kvp.Key,  // Convert string key to DateTimeKey
+    //     kvp => kvp.Value
+    // );
+}
 
 <table class="table table-striped">
     <thead class="thead-dark text-white">
@@ -9,27 +20,31 @@
             <th scope="col">Open</th>
             <th scope="col">Close</th>
             <th scope="col">High </th>
-      @*       <th scope="col">Low </th>
+            @*       <th scope="col">Low </th>
             <th scope="col">AdjClose</th>
             <th scope="col">Volume</th> *@
         </tr>
 
     </thead>
     <tbody>
-        @foreach (var stock in Model)
-        {
-            foreach (var item in stock.attributes.Values)
-            {
-                <tr class="text-white">
-                    <td scope="col">@stock.attributes.Keys</td>
-                    <td scope="col">@item.Volume</td>
-                    <td scope="col">@item.Adj</td>
-                    <td scope="col">@item.High</td>
-                   @*  <td scope="col">@stock.Low</td>
-                    <td scope="col">@stock.AdjClose</td>
-                    <td scope="col">@stock.Volume</td> *@
-                </tr>
-            }
+
+        @*  @foreach (var item in Model)
+        { *@
+        <tr class="text-white">
+            <td scope="col">@Model.Key</td>
+            <td scope="col">@Model.Value.Open</td>
+            <td scope="col">@Model.Value.Close</td>
+            <td scope="col">@Model.Value.High</td>
+
+            @*     <td scope="col">@item.Volume</td>
+            <td scope="col">@item.Adj</td>
+            <td scope="col">@item.High</td>
+            <th scope="col">@item.Open</th>
+            <th scope="col">@item.Close</th> *@
+            @*  <td scope="col">@stock.Low</td>
+            <td scope="col">@stock.AdjClose</td>
+            @* <td scope="col">@stock.Volume</td> *@
+        </tr> 
         }
     </tbody>
 </table>
