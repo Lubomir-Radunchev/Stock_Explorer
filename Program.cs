@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Stock_Explorer.Migrations;
+using Stock_Explorer.Services.Stocks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient("YahooFinanceApiClient");
+
+builder.Services.AddScoped<IStockService, StockService>();
 
 var app = builder.Build();
 
