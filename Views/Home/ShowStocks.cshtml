@@ -18,8 +18,11 @@
         <tr>
             <th scope="col">Date</th>
             <th scope="col">Open</th>
-            <th scope="col">Close</th>
             <th scope="col">High </th>
+            <th scope="col">Low </th>
+            <th scope="col">Close</th>
+            <th scope="col">Adj </th>
+            <th scope="col">Volume </th>
             @*       <th scope="col">Low </th>
             <th scope="col">AdjClose</th>
             <th scope="col">Volume</th> *@
@@ -29,13 +32,15 @@
     <tbody>
 
         @*  @foreach (var item in Model)
-        { *@
+        *@
         <tr class="text-white">
             <td scope="col">@Model.Key</td>
             <td scope="col">@Model.Value.Open</td>
-            <td scope="col">@Model.Value.Close</td>
             <td scope="col">@Model.Value.High</td>
-
+            <td scope="col">@Model.Value.Low</td>
+            <td scope="col">@Model.Value.Close</td>
+            <td scope="col">@Model.Value.Adj</td>
+            <td scope="col">@Model.Value.Volume</td>
             @*     <td scope="col">@item.Volume</td>
             <td scope="col">@item.Adj</td>
             <td scope="col">@item.High</td>
@@ -44,7 +49,7 @@
             @*  <td scope="col">@stock.Low</td>
             <td scope="col">@stock.AdjClose</td>
             @* <td scope="col">@stock.Volume</td> *@
-        </tr> 
-        }
+        </tr>
+        
     </tbody>
 </table>
