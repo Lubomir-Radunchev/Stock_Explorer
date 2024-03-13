@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Stock_Explorer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+65c528ddd6bc4e929153fdc14d567cca8303d003")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+622f143a162892d47703e4776b232041492f8b45")]
 [assembly: System.Reflection.AssemblyProductAttribute("Stock_Explorer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Stock_Explorer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
