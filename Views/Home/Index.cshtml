@@ -5,12 +5,29 @@
 }
 <div class="container">
     <form method="post" enctype="multipart/form-data">
-        <div class="form-group col">
-            <label class="text-white" asp-for="Name"></label>
-            <textarea asp-for="Name" rows="4" class="form-control" placeholder="Search stock"></textarea>
-            <span asp-validation-for="Name" class="small text-danger"></span>
-        </div>
+        <div class="row">
 
-        <input class="btn-lg btn-primary mt-3" type="submit" value="Search" />
+            <div class="form-group col-md-4">
+                <label class="text-white" asp-for="Name"></label>
+                <textarea asp-for="Name" rows="4" class="form-control" placeholder="Search stock"></textarea>
+                <span asp-validation-for="Name" class="small text-danger"></span>
+            </div>
+            <div class="form-group col-md-4">
+                <label class="text-white" asp-for="Date"></label>
+                <textarea asp-for="Date" rows="4" class="form-control" placeholder="Date should be on format YYYY-MM-DD"></textarea>
+                <span asp-validation-for="Date" class="small text-danger"></span>
+            </div>
+            <div class="form-group col-md-4 ">
+                <div class=" mt-4">
+                    <a asp-area="" asp-controller="Dealers" asp-action="Delete" class="btn-lg btn-danger float-right">Search</a>
+                </div>
+                <div class="mt-5">
+                    <button asp-area="" asp-controller="Home" asp-action="Check" accesskey="btn-lg btn-info float-right">Check </button>
+                </div>
+                <
+            </div>
+
+
+        </div>
     </form>
 </div>
