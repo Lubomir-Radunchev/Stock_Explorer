@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Stock_Explorer.Migrations;
 
@@ -11,9 +12,11 @@ using Stock_Explorer.Migrations;
 namespace Stock_Explorer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240311175741_StocksAndStocksRecordsHaveBEeenAdded")]
+    partial class StocksAndStocksRecordsHaveBEeenAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -247,11 +250,11 @@ namespace Stock_Explorer.Migrations
 
             modelBuilder.Entity("Stock_Explorer.Models.StockRecord", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<string>("Adj")
                         .IsRequired()
@@ -273,16 +276,11 @@ namespace Stock_Explorer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StockId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Volume")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("StockId");
+                    b.HasKey("id");
 
                     b.ToTable("StockRecords");
                 });
@@ -336,17 +334,6 @@ namespace Stock_Explorer.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Stock_Explorer.Models.StockRecord", b =>
-                {
-                    b.HasOne("Stock_Explorer.Models.Stock", "Stock")
-                        .WithMany()
-                        .HasForeignKey("StockId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Stock");
                 });
 #pragma warning restore 612, 618
         }

@@ -11,6 +11,7 @@ namespace Stock_Explorer.Migrations
         {
         }
         public DbSet<Stock> Stocks { get; set; }
+        public DbSet<StockRecord> StockRecords { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
