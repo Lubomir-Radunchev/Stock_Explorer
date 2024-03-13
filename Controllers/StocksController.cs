@@ -18,10 +18,10 @@ namespace Stock_Explorer.Controllers
             this.data = data;
         }
 
-        public ActionResult<List<Stock>> GetAll()
-        {
-            return this.data.Stocks.Where(x => x.Name == "APPL").ToList();
-        }
+        //public ActionResult<List<Stock>> GetAll()
+        //{
+        //    return this.data.Stocks.Where(x => x.Name == "APPL").ToList();
+        //}
 
         //public ActionResult Get(int id)
         //{
