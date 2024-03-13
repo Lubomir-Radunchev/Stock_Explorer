@@ -2,7 +2,9 @@ using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Stock_Explorer.DTO;
+using Stock_Explorer.Migrations;
 using Stock_Explorer.Models;
+using Stock_Explorer.Services.Stocks;
 using System;
 using System.Composition;
 using System.Diagnostics;
@@ -14,20 +16,53 @@ namespace Stock_Explorer.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly HttpClient _client;
+        private readonly IStockService stockService;
 
-        public HomeController(IHttpClientFactory httpClientFactory)
+
+        public HomeController(IHttpClientFactory httpClientFactory, IStockService stockService)
         {
             _client = httpClientFactory.CreateClient();
             // Set the base address
             _client.BaseAddress = new Uri("https://alpha.financeapi.net/symbol/get-chart");
+            this.stockService = stockService;
         }
+
         [HttpGet]
         public IActionResult Index()
         {
             var stock = new SearchCriteria();
             return View(stock);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Check(SearchCriteria stock)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"get-chart?period=1Y&symbol={stock.Name}");
+
+            // Add the required header
+            request.Headers.Add("X-API-KEY", "3db8airwaIaFxjOS261v69J7U5civ2D85RW9JrUo");
+
+            // Send the request and get the response
+            var response = await _client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                //var responseContent = await response.Content.ReadAsStringAsync();
+
+                //List<ChartData?> stockInfo = JsonConvert.DeserializeObject<List<ChartData>>(responseContent);
+
+                this.stockService.Add(stock.Name);
+
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                // Handle the error, e.g., log or return an error view
+                return View("Error");
+            }
+
+
         }
 
         [HttpPost]
@@ -94,10 +129,10 @@ namespace Stock_Explorer.Controllers
                 ;
                 //List<ChartDataPoint> stockDataPoints = stockInfo?.Attributes?.DataPoints?.Values.ToList();
 
-
-                var correct = stockInfo.attributes.OrderByDescending(x => x.Key).LastOrDefault();
-
+                var correct = stockInfo.attributes.OrderBy(x => x.Key).LastOrDefault();
                 TempData["stocks"] = JsonConvert.SerializeObject(correct);
+
+
 
                 //var stockInfo = JsonConvert.DeserializeObject<StockInfo>(responseContent);
 
