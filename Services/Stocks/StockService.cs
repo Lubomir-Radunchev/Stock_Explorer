@@ -13,6 +13,11 @@ namespace Stock_Explorer.Services.Stocks
             this.data = data;
         }
 
+        public Stock? GetStockByName(string name)
+        {
+            return this.data.Stocks.Where(x => x.Name == name).FirstOrDefault();
+        }
+
         public void Add(string name)
         {
             if (string.IsNullOrEmpty(name))
