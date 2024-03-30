@@ -33,5 +33,11 @@ namespace Stock_Explorer.Services.Records
             }
         }
 
+        public void Add(StockRecord income)
+        {
+            this.data.Add(income);
+            this.data.SaveChanges();
+        }
+
     }
 }
