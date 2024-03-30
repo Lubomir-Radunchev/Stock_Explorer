@@ -15,7 +15,9 @@ namespace Stock_Explorer.Services.Stocks
 
         public Stock? GetStockByName(string name)
         {
-            return this.data.Stocks.Where(x => x.Name == name).FirstOrDefault();
+            return this.data.Stocks
+                .Where(x => x.Name.ToLower() == name.ToLower())
+                .FirstOrDefault();
         }
 
         public void Add(string name)
