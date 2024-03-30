@@ -1,16 +1,11 @@
-using Azure.Core;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Stock_Explorer.DTO;
-using Stock_Explorer.Migrations;
 using Stock_Explorer.Models;
+using Stock_Explorer.Services.Records;
 using Stock_Explorer.Services.Stocks;
-using System;
-using System.Composition;
+using System.Data;
 using System.Diagnostics;
-using System.Net;
-using System.Net.Http;
-using System.Security.Cryptography.Xml;
 
 namespace Stock_Explorer.Controllers
 {
@@ -18,14 +13,15 @@ namespace Stock_Explorer.Controllers
     {
         private readonly HttpClient _client;
         private readonly IStockService stockService;
+        private readonly IStockRecordsService recordService;
 
-
-        public HomeController(IHttpClientFactory httpClientFactory, IStockService stockService)
+        public HomeController(IHttpClientFactory httpClientFactory, IStockRecordsService recordService, IStockService stockService)
         {
             _client = httpClientFactory.CreateClient();
             // Set the base address
             _client.BaseAddress = new Uri("https://alpha.financeapi.net/symbol/get-chart");
             this.stockService = stockService;
+            this.recordService = recordService;
         }
 
         [HttpGet]
@@ -48,12 +44,79 @@ namespace Stock_Explorer.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                //var responseContent = await response.Content.ReadAsStringAsync();
+                var responseContent = await response.Content.ReadAsStringAsync();
 
-                //List<ChartData?> stockInfo = JsonConvert.DeserializeObject<List<ChartData>>(responseContent);
+                // CHECK IF THE STOCK IS FOUND IN THE DATABASE
+                var lastStockInfo = this.stockService.GetStockByName(stock.Name);
 
-                this.stockService.Add(stock.Name);
+                if (lastStockInfo is null)
+                {
+                    // CREATING THE TABLE
+                    this.stockService.Add(stock.Name);
+                }
 
+                ChartData? stockInfo = JsonConvert.DeserializeObject<ChartData>(responseContent);
+
+                lastStockInfo = this.stockService.GetStockByName(stock.Name);
+                // poslednata akciq wkarana datata i 
+                var diffOfDates = DateTime.UtcNow - lastStockInfo.LastUpdate;
+                if (diffOfDates.Days > 1)
+                {
+
+                    // var newest record = recordsService.ADD(INT DAYS, stocksinfo);
+                    var newestRecord = stockInfo.attributes.Reverse().Take(diffOfDates.Days).Where(x => DateTime.Parse(x.Key) > lastStockInfo.LastUpdate).ToList();
+
+                    foreach (var item in newestRecord)
+                    {
+                        var record = new StockRecord()
+                        {
+                            Adj = item.Value.Adj,
+                            Close = item.Value.Close,
+                            High = item.Value.High,
+                            Low = item.Value.Low,
+                            Volume = item.Value.Volume,
+                            Open = item.Value.Open,
+                            Data = item.Key,
+                            StockId = lastStockInfo.Id,
+
+                        };
+
+                        this.recordService.Add(record);
+                    }
+                    // MAKE THE FETCHING DATA ONLY FOR THE 
+                    TempData["alert"] = "Newest information was added!";
+                    return RedirectToAction("Index");
+                }
+                else if (diffOfDates.Days < 0)
+                {
+
+                    var newestRecord = stockInfo.attributes;
+
+                    foreach (var item in stockInfo.attributes)
+                    {
+                        var record = new StockRecord()
+                        {
+                            Adj = item.Value.Adj,
+                            Close = item.Value.Close,
+                            High = item.Value.High,
+                            Low = item.Value.Low,
+                            Volume = item.Value.Volume,
+                            Open = item.Value.Open,
+                            Data = item.Key,
+                            StockId = lastStockInfo.Id,
+
+                        };
+
+                        this.recordService.Add(record);
+                    }
+                }
+                else if (diffOfDates.Days == 0)
+                {
+                    TempData["alert"] = "Stock is already updated!";
+                    return RedirectToAction("Index");
+                }
+
+                TempData["alert"] = "Successful update!";
                 return RedirectToAction("Index");
             }
             else
@@ -107,7 +170,7 @@ namespace Stock_Explorer.Controllers
 
 
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"get-chart?period=6M&symbol=AAPL");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"get-chart?period=1Y&symbol={stock.Name}");
 
             // Add the required header
             request.Headers.Add("X-API-KEY", "3db8airwaIaFxjOS261v69J7U5civ2D85RW9JrUo");
@@ -118,27 +181,43 @@ namespace Stock_Explorer.Controllers
             if (response.IsSuccessStatusCode)
             {
                 // Deserialize the response content
-
-
-
-
                 var responseContent = await response.Content.ReadAsStringAsync();
 
+                //List<ChartDataPoint> stockDataPoints = stockInfo?.Attributes?.DataPoints?.Values.ToList();
                 ChartData? stockInfo = JsonConvert.DeserializeObject<ChartData>(responseContent);
 
-                ;
-                //List<ChartDataPoint> stockDataPoints = stockInfo?.Attributes?.DataPoints?.Values.ToList();
+                var lastStockInfo = this.stockService.GetStockByName(stock.Name);
+
+                if (lastStockInfo is not null)
+                {
+                    // TODO: THROW ERROR BECAUSE ITS ALREDY IN THE DATABASE!!!!!!
+                }
+                else
+                {
+                    this.stockService.Add(stock.Name);
+                    lastStockInfo = stockService.GetStockByName(stock.Name);
+                }
+
+                foreach (var item in stockInfo.attributes)
+                {
+                    var record = new StockRecord()
+                    {
+                        Adj = item.Value.Adj,
+                        Close = item.Value.Close,
+                        High = item.Value.High,
+                        Low = item.Value.Low,
+                        Volume = item.Value.Volume,
+                        Open = item.Value.Open,
+                        Data = item.Key,
+                        StockId = lastStockInfo.Id,
+
+                    };
+
+                    this.recordService.Add(record);
+                }
 
                 var correct = stockInfo.attributes.OrderBy(x => x.Key).LastOrDefault();
                 TempData["stocks"] = JsonConvert.SerializeObject(correct);
-
-
-
-                //var stockInfo = JsonConvert.DeserializeObject<StockInfo>(responseContent);
-
-                //List<StockYahooDTO> stockDetails = stockInfo?.QuoteResponse?.Result;
-
-                // Process 'result' as needed
 
                 return RedirectToAction("ShowStocks");
             }
@@ -152,19 +231,34 @@ namespace Stock_Explorer.Controllers
         }
 
 
-        public IActionResult ShowStocks()
+        public IActionResult ShowStocks(SearchCriteria searchCriteria = null)
         {
-            string jsonString = TempData["stocks"] as string;
+            //string jsonString = TempData["stocks"] as string;
 
-            // Deserialize into a Dictionary<string, ChartDataPoint>
-            ChartDataTest stocks = JsonConvert.DeserializeObject<ChartDataTest>(jsonString);
+            //Deserialize into a Dictionary<string, ChartDataPoint>
 
-            // Convert string keys to DateTimeKey
-            //Dictionary<string, ChartDataPoint> stocksDateTimeKeys = stocksStringKeys.ToDictionary(
+            // взимаме акцията 
+            if (searchCriteria.Name == null)
+            {
+
+            }
+
+            // взимаме рекордите на тази акция 
+
+
+            // визуализираме я
+
+
+            ChartDataTest stocks = JsonConvert.DeserializeObject<ChartDataTest>(searchCriteria.Name);
+
+            //Convert string keys to DateTimeKey
+            //Dictionary<string, ChartDataPoint> stocksDateTimeKeys = jsonString.ToDictionary(
             //    kvp => kvp.Key,  // Convert string key to DateTimeKey
             //    kvp => kvp.Value
             //);
-            return View(stocks);
+            //return View(stocks);
+
+            return View();
         }
         public IActionResult Privacy()
         {
