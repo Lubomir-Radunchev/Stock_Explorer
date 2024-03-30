@@ -17,7 +17,7 @@ namespace Stock_Explorer.Models
         [ForeignKey(nameof(StockId))]
         public int StockId { get; set; }
         public Stock Stock { get; set; }
-
+        public string Data { get; set; }
 
     }
 }
